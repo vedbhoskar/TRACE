@@ -4,7 +4,7 @@ TRACE Proof is a hackathon prototype for publishing and inspecting a small, publ
 
 `recorded donation -> allocations -> expense claims -> receipt integrity checks -> reviewer decisions`
 
-The application is a proof registry, not a payment processor, bank ledger, accounting system, or guarantee that a submitted claim is true. The Stage 0 workspace contains scaffolding only; application functionality and a public deployment have not yet been implemented.
+The application is a proof registry, not a payment processor, bank ledger, accounting system, or guarantee that a submitted claim is true. The canonical synthetic dataset is recorded in a public ProofRegistry deployment on Ethereum Sepolia.
 
 ## Workspace
 
@@ -37,7 +37,16 @@ Copy the relevant `.env.example` to `.env` only when network configuration is ne
 
 ## Current scope
 
-Stages 0–2 establish a reproducible toolchain, the canonical synthetic fixture, and a tested ProofRegistry contract. The fixture includes validated short IDs, integer-paise money utilities, exact-byte SHA-256 receipt fixtures, and reconciled demonstration metrics. The contract enforces immutable NGO/reviewer roles, parent capacity limits, append-only claims, and preserved review history.
+Stages 0–3 establish a reproducible toolchain, the canonical synthetic fixture, a tested ProofRegistry contract, and a fully seeded Sepolia deployment. The fixture includes validated short IDs, integer-paise money utilities, exact-byte SHA-256 receipt fixtures, and reconciled demonstration metrics. The contract enforces immutable NGO/reviewer roles, parent capacity limits, append-only claims, and preserved review history.
+
+Public deployment:
+
+- Network: Ethereum Sepolia (`11155111`)
+- Contract: [`0x8b123800F17CbeBCE3546678A70a0b5414b779e3`](https://sepolia.etherscan.io/address/0x8b123800F17CbeBCE3546678A70a0b5414b779e3)
+- Deployment block: `11718513`
+- Deployment transaction: [`0x5fd30c59e1f23737dff9b6b8eda870691a63c0c219955b4419d81f047f435361`](https://sepolia.etherscan.io/tx/0x5fd30c59e1f23737dff9b6b8eda870691a63c0c219955b4419d81f047f435361)
+- Canonical seed: 1 donation, 3 allocations, 3 expenses, and 2 reviews across 9 confirmed transactions
+- Public transaction metadata: [`contracts/deployments/sepolia.json`](contracts/deployments/sepolia.json)
 
 Run the Stage 1 checks with:
 
@@ -48,6 +57,6 @@ npm run build
 npm run lint
 ```
 
-The ProofRegistry is currently verified only on Hardhat's local simulated network. Chain-backed frontend reads, wallet write flows, seeded records, and public deployment belong to later stages and must not be represented as complete yet.
+The Stage 3 verifier confirms ₹10,000 recorded, ₹10,000 allocated, ₹7,700 claimed, all frozen receipt digests, the three expected latest review states, and all nine canonical events. The frontend ABI and public deployment configuration are exported under `frontend/src/generated/`. Chain-backed frontend reads and wallet write flows belong to later stages.
 
 All planned demonstration entities, receipts, and amounts are synthetic. No real donation or real nonprofit activity is represented.

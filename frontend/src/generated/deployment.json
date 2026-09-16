@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "network": "sepolia",
+  "chainId": 11155111,
+  "contractAddress": "0x8b123800F17CbeBCE3546678A70a0b5414b779e3",
+  "deploymentBlock": 11718513,
+  "deploymentTransactionHash": "0x5fd30c59e1f23737dff9b6b8eda870691a63c0c219955b4419d81f047f435361",
+  "campaignId": "0x43414d2d464c4f4f442d30310000000000000000000000000000000000000000",
+  "ngoAddress": "0xcd03b48ffEE227D7796918b091f593292e71d908",
+  "reviewerAddress": "0x498E0503cc00EDeeE00a054C99c69894b13e4ae0",
+  "explorerBaseUrl": "https://sepolia.etherscan.io",
+  "deployedAt": "2026-09-16T18:34:24.000Z",
+  "seeded": true,
+  "transactions": [
+    {
+      "action": "recordDonation",
+      "recordId": "0x444f4e2d38463432413100000000000000000000000000000000000000000000",
+      "hash": "0xe20109109902056cda73e6bc5636eccd1d3e2424b61cc0267b8e738ddbb6caf2",
+      "blockNumber": 11718551,
+      "explorerUrl": "https://sepolia.etherscan.io/tx/0xe20109109902056cda73e6bc5636eccd1d3e2424b61cc0267b8e738ddbb6caf2"
+    },
+    {
+      "action": "recordAllocation",
+      "recordId": "0x414c2d464f4f442d303100000000000000000000000000000000000000000000",
+      "hash": "0x1e4f8d268a8c257e79d03e5582d1bed33f6fe5f85c340ffcd43048acb40b417d",
+      "blockNumber": 11718553,
+      "explorerUrl": "https://sepolia.etherscan.io/tx/0x1e4f8d268a8c257e79d03e5582d1bed33f6fe5f85c340ffcd43048acb40b417d"
+    },
+    {
+      "action": "recordAllocation",
+      "recordId": "0x414c2d4d45442d30310000000000000000000000000000000000000000000000",
+      "hash": "0x33cfa5eeb329bf6690bb0e12942fb300e1aa962a81ba5798e288cdb43fb2256a",
+      "blockNumber": 11718554,
+      "explorerUrl": "https://sepolia.etherscan.io/tx/0x33cfa5eeb329bf6690bb0e12942fb300e1aa962a81ba5798e288cdb43fb2256a"
+    },
+    {
+      "action": "recordAllocation",
+      "recordId": "0x414c2d4c4f472d30310000000000000000000000000000000000000000000000",
+      "hash": "0xbf4f48ac929b955d5d1f1338c4aded3dc23cad36030b4a1569f32ee2a51668b8",
+      "blockNumber": 11718555,
+      "explorerUrl": "https://sepolia.etherscan.io/tx/0xbf4f48ac929b955d5d1f1338c4aded3dc23cad36030b4a1569f32ee2a51668b8"
+    },
+    {
+      "action": "submitExpense",
+      "recordId": "0x45582d464f4f442d303100000000000000000000000000000000000000000000",
+      "hash": "0x8d8be067a3ab483896d67008ae361ae60fe4184d448511f2b3bceb322b8a02bb",
+      "blockNumber": 11718556,
+      "explorerUrl": "https://sepolia.etherscan.io/tx/0x8d8be067a3ab483896d67008ae361ae60fe4184d448511f2b3bceb322b8a02bb"
+    },
+    {
+      "action": "submitExpense",
+      "recordId": "0x45582d4d45442d30310000000000000000000000000000000000000000000000",
+      "hash": "0xf1397153203e8f5db9c6ab28c8f1742abd37bf658704e0fc32be4d1fcbe397fa",
+      "blockNumber": 11718557,
+      "explorerUrl": "https://sepolia.etherscan.io/tx/0xf1397153203e8f5db9c6ab28c8f1742abd37bf658704e0fc32be4d1fcbe397fa"
+    },
+    {
+      "action": "submitExpense",
+      "recordId": "0x45582d4c4f472d30310000000000000000000000000000000000000000000000",
+      "hash": "0x366dd456fb09fc4a8ccb9aa13b1a8ba8e6980079ee0fd6de295c70e07b9cd68a",
+      "blockNumber": 11718558,
+      "explorerUrl": "https://sepolia.etherscan.io/tx/0x366dd456fb09fc4a8ccb9aa13b1a8ba8e6980079ee0fd6de295c70e07b9cd68a"
+    },
+    {
+      "action": "reviewExpense",
+      "recordId": "0x45582d464f4f442d303100000000000000000000000000000000000000000000",
+      "hash": "0xf37424e10d960d84781b496fc91c46695efad89365de10a86041e85f1e669ad0",
+      "blockNumber": 11718559,
+      "explorerUrl": "https://sepolia.etherscan.io/tx/0xf37424e10d960d84781b496fc91c46695efad89365de10a86041e85f1e669ad0"
+    },
+    {
+      "action": "reviewExpense",
+      "recordId": "0x45582d4c4f472d30310000000000000000000000000000000000000000000000",
+      "hash": "0xb0d539d4c034b340d37ee8411ca55956c9e1311671bf70b0f2cc2d1cdde6d59a",
+      "blockNumber": 11718560,
+      "explorerUrl": "https://sepolia.etherscan.io/tx/0xb0d539d4c034b340d37ee8411ca55956c9e1311671bf70b0f2cc2d1cdde6d59a"
+    }
+  ],
+  "source": "live-chain"
+}

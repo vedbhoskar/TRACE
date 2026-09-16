@@ -1,0 +1,827 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "campaignId_",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "ngo_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "auditor_",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "donationId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "availablePaise",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "requestedPaise",
+        "type": "uint256"
+      }
+    ],
+    "name": "AllocationLimitExceeded",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "allocationId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "AllocationNotFound",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "donationId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "DonationNotFound",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "allocationId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "DuplicateAllocation",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "donationId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "DuplicateDonation",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "expenseId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "DuplicateExpense",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "enum ProofRegistry.ReviewStatus",
+        "name": "decision",
+        "type": "uint8"
+      },
+      {
+        "internalType": "enum ProofRegistry.ReasonCode",
+        "name": "reason",
+        "type": "uint8"
+      }
+    ],
+    "name": "DuplicateReview",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "EmptyId",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "EmptyReceiptHash",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "allocationId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "availablePaise",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "requestedPaise",
+        "type": "uint256"
+      }
+    ],
+    "name": "ExpenseLimitExceeded",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "expenseId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "ExpenseNotFound",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "enum ProofRegistry.ReasonCode",
+        "name": "reason",
+        "type": "uint8"
+      }
+    ],
+    "name": "InvalidReviewReason",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "enum ProofRegistry.ReviewStatus",
+        "name": "decision",
+        "type": "uint8"
+      }
+    ],
+    "name": "InvalidReviewStatus",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RolesMustDiffer",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      }
+    ],
+    "name": "UnauthorizedAuditor",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      }
+    ],
+    "name": "UnauthorizedNgo",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ZeroAddress",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ZeroAmount",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ZeroCampaignId",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "allocationId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "donationId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amountPaise",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum ProofRegistry.Category",
+        "name": "category",
+        "type": "uint8"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "submitter",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint64",
+        "name": "recordedAt",
+        "type": "uint64"
+      }
+    ],
+    "name": "AllocationRecorded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "donationId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amountPaise",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "submitter",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint64",
+        "name": "recordedAt",
+        "type": "uint64"
+      }
+    ],
+    "name": "DonationRecorded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "expenseId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum ProofRegistry.ReviewStatus",
+        "name": "decision",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum ProofRegistry.ReasonCode",
+        "name": "reason",
+        "type": "uint8"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "reviewer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint64",
+        "name": "reviewedAt",
+        "type": "uint64"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "reviewNumber",
+        "type": "uint256"
+      }
+    ],
+    "name": "ExpenseReviewed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "expenseId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "allocationId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amountPaise",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "receiptHash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "submitter",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint64",
+        "name": "submittedAt",
+        "type": "uint64"
+      }
+    ],
+    "name": "ExpenseSubmitted",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "allocationCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "auditor",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "campaignId",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "donationCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "expenseCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "allocationId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getAllocation",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "exists",
+            "type": "bool"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "donationId",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amountPaise",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "claimedPaise",
+            "type": "uint256"
+          },
+          {
+            "internalType": "enum ProofRegistry.Category",
+            "name": "category",
+            "type": "uint8"
+          },
+          {
+            "internalType": "address",
+            "name": "submitter",
+            "type": "address"
+          },
+          {
+            "internalType": "uint64",
+            "name": "recordedAt",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct ProofRegistry.Allocation",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "donationId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getDonation",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "exists",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amountPaise",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "allocatedPaise",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "submitter",
+            "type": "address"
+          },
+          {
+            "internalType": "uint64",
+            "name": "recordedAt",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct ProofRegistry.Donation",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "expenseId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getExpense",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "exists",
+            "type": "bool"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "allocationId",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amountPaise",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "receiptHash",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "submitter",
+            "type": "address"
+          },
+          {
+            "internalType": "uint64",
+            "name": "submittedAt",
+            "type": "uint64"
+          },
+          {
+            "internalType": "enum ProofRegistry.ReviewStatus",
+            "name": "latestReviewStatus",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ProofRegistry.ReasonCode",
+            "name": "latestReviewReason",
+            "type": "uint8"
+          },
+          {
+            "internalType": "address",
+            "name": "latestReviewer",
+            "type": "address"
+          },
+          {
+            "internalType": "uint64",
+            "name": "latestReviewedAt",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint256",
+            "name": "reviewCount",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ProofRegistry.Expense",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "expenseId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getReviewHistory",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "enum ProofRegistry.ReviewStatus",
+            "name": "decision",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum ProofRegistry.ReasonCode",
+            "name": "reason",
+            "type": "uint8"
+          },
+          {
+            "internalType": "address",
+            "name": "reviewer",
+            "type": "address"
+          },
+          {
+            "internalType": "uint64",
+            "name": "reviewedAt",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct ProofRegistry.ReviewRecord[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "ngo",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "allocationId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "donationId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountPaise",
+        "type": "uint256"
+      },
+      {
+        "internalType": "enum ProofRegistry.Category",
+        "name": "category",
+        "type": "uint8"
+      }
+    ],
+    "name": "recordAllocation",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "donationId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountPaise",
+        "type": "uint256"
+      }
+    ],
+    "name": "recordDonation",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "reviewEventCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "expenseId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "enum ProofRegistry.ReviewStatus",
+        "name": "decision",
+        "type": "uint8"
+      },
+      {
+        "internalType": "enum ProofRegistry.ReasonCode",
+        "name": "reason",
+        "type": "uint8"
+      }
+    ],
+    "name": "reviewExpense",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "expenseId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "allocationId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountPaise",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "receiptHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "submitExpense",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalAllocatedPaise",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalExpenseClaimsPaise",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalRecordedDonationsPaise",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
