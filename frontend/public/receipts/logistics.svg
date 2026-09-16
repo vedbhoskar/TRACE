@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520">
+  <rect width="800" height="520" fill="#f8fafc"/>
+  <rect x="32" y="32" width="736" height="456" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="64" y="82" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#0f172a">SYNTHETIC RECEIPT — DEMO ONLY</text>
+  <text x="64" y="122" font-family="Arial, sans-serif" font-size="18" fill="#475569">Konkan Relief Transport (fictional vendor)</text>
+  <line x1="64" y1="154" x2="736" y2="154" stroke="#cbd5e1"/>
+  <text x="64" y="202" font-family="Arial, sans-serif" font-size="20" fill="#0f172a">Local delivery charge</text>
+  <text x="600" y="202" font-family="Arial, sans-serif" font-size="20" text-anchor="end" fill="#0f172a">₹900</text>
+  <text x="64" y="250" font-family="Arial, sans-serif" font-size="17" fill="#64748b">Reference: EX-LOG-01</text>
+  <line x1="64" y1="326" x2="736" y2="326" stroke="#cbd5e1"/>
+  <text x="64" y="374" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#0f172a">TOTAL</text>
+  <text x="600" y="374" font-family="Arial, sans-serif" font-size="22" font-weight="700" text-anchor="end" fill="#0f172a">₹900</text>
+  <text x="64" y="440" font-family="Arial, sans-serif" font-size="15" fill="#b45309">Fictional document prepared solely for the TRACE Proof demonstration.</text>
+</svg>

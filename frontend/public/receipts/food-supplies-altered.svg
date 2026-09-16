@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520">
+  <rect width="800" height="520" fill="#fff7ed"/>
+  <rect x="32" y="32" width="736" height="456" rx="16" fill="#ffffff" stroke="#f97316" stroke-width="3"/>
+  <text x="64" y="82" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#9a3412">ALTERED SAMPLE — DEMO ONLY</text>
+  <text x="64" y="122" font-family="Arial, sans-serif" font-size="18" fill="#475569">Sahyadri Community Supplies (fictional vendor)</text>
+  <line x1="64" y1="154" x2="736" y2="154" stroke="#fed7aa"/>
+  <text x="64" y="202" font-family="Arial, sans-serif" font-size="20" fill="#0f172a">Food ration kits</text>
+  <text x="600" y="202" font-family="Arial, sans-serif" font-size="20" text-anchor="end" fill="#c2410c">₹5,800</text>
+  <text x="64" y="250" font-family="Arial, sans-serif" font-size="17" fill="#64748b">Reference: EX-FOOD-01</text>
+  <text x="64" y="282" font-family="Arial, sans-serif" font-size="17" fill="#c2410c">Quantity: 29 kits × ₹200</text>
+  <line x1="64" y1="326" x2="736" y2="326" stroke="#fed7aa"/>
+  <text x="64" y="374" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#0f172a">TOTAL</text>
+  <text x="600" y="374" font-family="Arial, sans-serif" font-size="22" font-weight="700" text-anchor="end" fill="#c2410c">₹5,800</text>
+  <text x="64" y="440" font-family="Arial, sans-serif" font-size="15" fill="#b45309">Intentionally modified to demonstrate a SHA-256 mismatch.</text>
+</svg>

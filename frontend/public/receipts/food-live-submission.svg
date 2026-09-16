@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520">
+  <rect width="800" height="520" fill="#eff6ff"/>
+  <rect x="32" y="32" width="736" height="456" rx="16" fill="#ffffff" stroke="#60a5fa" stroke-width="2"/>
+  <text x="64" y="82" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#1e3a8a">LIVE DEMO RECEIPT — SYNTHETIC</text>
+  <text x="64" y="122" font-family="Arial, sans-serif" font-size="18" fill="#475569">Sahyadri Community Supplies (fictional vendor)</text>
+  <line x1="64" y1="154" x2="736" y2="154" stroke="#bfdbfe"/>
+  <text x="64" y="202" font-family="Arial, sans-serif" font-size="20" fill="#0f172a">Additional food ration kits</text>
+  <text x="600" y="202" font-family="Arial, sans-serif" font-size="20" text-anchor="end" fill="#0f172a">₹1,200</text>
+  <text x="64" y="250" font-family="Arial, sans-serif" font-size="17" fill="#64748b">For a new unique expense ID during the live demonstration</text>
+  <line x1="64" y1="326" x2="736" y2="326" stroke="#bfdbfe"/>
+  <text x="64" y="374" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#0f172a">TOTAL</text>
+  <text x="600" y="374" font-family="Arial, sans-serif" font-size="22" font-weight="700" text-anchor="end" fill="#0f172a">₹1,200</text>
+  <text x="64" y="440" font-family="Arial, sans-serif" font-size="15" fill="#b45309">Fictional document prepared solely for the TRACE Proof demonstration.</text>
+</svg>

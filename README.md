@@ -37,6 +37,17 @@ Copy the relevant `.env.example` to `.env` only when network configuration is ne
 
 ## Current scope
 
-Stage 0 establishes a reproducible frontend and contract toolchain. Donation records, allocation rules, expense claims, receipt hashing, reviewer decisions, testnet deployment, and the final interface belong to later stages and must not be represented as complete yet.
+Stages 0–1 establish a reproducible toolchain and the canonical synthetic fixture: validated short IDs, integer-paise money utilities, exact-byte SHA-256 receipt fixtures, and reconciled demonstration metrics. The current frontend renders a compact fixture summary so these modules are exercised by the production build.
+
+Run the Stage 1 checks with:
+
+```bash
+cd frontend
+npm test
+npm run build
+npm run lint
+```
+
+The ProofRegistry contract, chain-backed records, wallet write flows, reviewer actions, and public deployment belong to later stages and must not be represented as complete yet.
 
 All planned demonstration entities, receipts, and amounts are synthetic. No real donation or real nonprofit activity is represented.
