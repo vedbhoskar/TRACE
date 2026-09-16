@@ -1,0 +1,21 @@
+# Dependencies and build output
+node_modules/
+dist/
+artifacts/
+cache/
+coverage/
+types/
+bundle/
+
+# Environment and local configuration
+.env
+.env.*
+!.env.example
+*.local
+
+# Logs and editor files
+*.log
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json

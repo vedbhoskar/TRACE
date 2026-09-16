@@ -1,0 +1,9 @@
+# TRACE Proof progress log
+
+## 2026-09-16 — Stage 0: workspace scaffold
+
+- **Elapsed:** Approximately 15 minutes; started with 10 hours remaining.
+- **Changed:** Created independent React/Vite and Hardhat 3 ethers/TypeScript packages, runtime pin, ignore rules, environment templates, and root project documentation.
+- **Validation:** Node 22.19.0 satisfies the current documented Vite and Hardhat minimums. `frontend`: production build and lint passed; the development server returned HTTP 200. `contracts`: Solidity 0.8.34 compiled, three Solidity tests and two TypeScript tests passed, and TypeScript typechecking passed. A public Sepolia RPC returned chain ID 11155111. Both populated `.env` paths are ignored, `.env.example` files remain trackable, no files are staged, and the repository scan found no private-key-shaped value or mnemonic assignment outside ignored dependencies and lockfiles.
+- **Known limitations:** Official event rules and rubric were not supplied. Testnet wallet ownership and balances cannot be verified without the two public account addresses; no faucet request was made, although Ethereum's current network documentation lists multiple Sepolia faucets. The frontend dependency audit reports zero vulnerabilities. The official Hardhat ethers scaffold currently reports 14 development-tooling advisories (12 low, 1 moderate, 1 high); production-only audit reports zero, and the suggested complete fix would introduce breaking package versions, so no forced audit rewrite was applied. No TRACE Proof application logic or deployment exists yet.
+- **AI assistance:** AI was used to inspect the blueprint, verify official tooling requirements, scaffold both packages, prepare configuration/documentation, and run validation. The developer must review the generated files and recorded results before committing.
