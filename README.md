@@ -37,7 +37,7 @@ Copy the relevant `.env.example` to `.env` only when network configuration is ne
 
 ## Current scope
 
-Stages 0–1 establish a reproducible toolchain and the canonical synthetic fixture: validated short IDs, integer-paise money utilities, exact-byte SHA-256 receipt fixtures, and reconciled demonstration metrics. The current frontend renders a compact fixture summary so these modules are exercised by the production build.
+Stages 0–2 establish a reproducible toolchain, the canonical synthetic fixture, and a tested ProofRegistry contract. The fixture includes validated short IDs, integer-paise money utilities, exact-byte SHA-256 receipt fixtures, and reconciled demonstration metrics. The contract enforces immutable NGO/reviewer roles, parent capacity limits, append-only claims, and preserved review history.
 
 Run the Stage 1 checks with:
 
@@ -48,6 +48,6 @@ npm run build
 npm run lint
 ```
 
-The ProofRegistry contract, chain-backed records, wallet write flows, reviewer actions, and public deployment belong to later stages and must not be represented as complete yet.
+The ProofRegistry is currently verified only on Hardhat's local simulated network. Chain-backed frontend reads, wallet write flows, seeded records, and public deployment belong to later stages and must not be represented as complete yet.
 
 All planned demonstration entities, receipts, and amounts are synthetic. No real donation or real nonprofit activity is represented.
