@@ -30,3 +30,17 @@ export async function hashReceiptFile(
 export function digestMatches(actual: string, expected: string): boolean {
   return actual.trim().toLowerCase() === expected.trim().toLowerCase()
 }
+
+export interface ReceiptVerification {
+  digest: `0x${string}`
+  matches: boolean
+}
+
+export async function verifyReceiptFile(
+  file: Blob,
+  expectedDigest: string,
+  maxBytes = MAX_RECEIPT_BYTES,
+): Promise<ReceiptVerification> {
+  const digest = await hashReceiptFile(file, maxBytes)
+  return { digest, matches: digestMatches(digest, expectedDigest) }
+}

@@ -37,6 +37,10 @@ npm run lint
   read. RPC failures show “Unable to check Sepolia.”
 - A bundled canonical snapshot is available only through an explicit error-state
   action and is labeled `Cached snapshot · … · not freshly checked`.
+- Each expense exposes fictional sample downloads and a local file chooser. The
+  browser rejects empty or over-5-MB files, computes SHA-256 over the exact raw
+  bytes, and compares that value with the live or clearly labeled cached digest.
+  Selected bytes are neither uploaded nor rendered into the page.
 
-The current UI is read-only. Receipt comparison, wallet-backed expense
-submission, and reviewer writes belong to later build stages.
+The current UI is read-only. Wallet-backed expense submission and reviewer
+writes belong to later build stages.

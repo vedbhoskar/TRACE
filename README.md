@@ -37,7 +37,7 @@ Copy the relevant `.env.example` to `.env` only when network configuration is ne
 
 ## Current scope
 
-Stages 0–4 establish a reproducible toolchain, the canonical synthetic fixture, a tested ProofRegistry contract, a fully seeded Sepolia deployment, and wallet-free public chain reads. The fixture includes validated short IDs, integer-paise money utilities, exact-byte SHA-256 receipt fixtures, and reconciled demonstration metrics. The contract enforces immutable NGO/reviewer roles, parent capacity limits, append-only claims, and preserved review history.
+Stages 0–5 establish a reproducible toolchain, the canonical synthetic fixture, a tested ProofRegistry contract, a fully seeded Sepolia deployment, wallet-free public chain reads, and local receipt-integrity comparison. The fixture includes validated short IDs, integer-paise money utilities, exact-byte SHA-256 receipt fixtures, and reconciled demonstration metrics. The contract enforces immutable NGO/reviewer roles, parent capacity limits, append-only claims, and preserved review history.
 
 Public deployment:
 
@@ -57,6 +57,6 @@ npm run build
 npm run lint
 ```
 
-The Stage 3 verifier confirms ₹10,000 recorded, ₹10,000 allocated, ₹7,700 claimed, all frozen receipt digests, the three expected latest review states, and all nine canonical events. Stage 4 reads that exported deployment in a fresh browser without a wallet, reconstructs the full parent-child trail and review history, shows real explorer references, and keeps unknown-record, loading, RPC-error, and explicitly selected cached-snapshot states distinct. Receipt comparison and wallet write flows belong to later stages.
+The Stage 3 verifier confirms ₹10,000 recorded, ₹10,000 allocated, ₹7,700 claimed, all frozen receipt digests, the three expected latest review states, and all nine canonical events. Stage 4 reads that exported deployment in a fresh browser without a wallet, reconstructs the full parent-child trail and review history, shows real explorer references, and keeps unknown-record, loading, RPC-error, and explicitly selected cached-snapshot states distinct. Stage 5 downloads fictional samples and compares a user-selected receipt locally against the displayed digest without uploading or rendering its contents. Wallet write flows belong to later stages.
 
 All planned demonstration entities, receipts, and amounts are synthetic. No real donation or real nonprofit activity is represented.

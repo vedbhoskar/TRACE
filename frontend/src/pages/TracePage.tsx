@@ -1,6 +1,7 @@
 import type { ProofData, TimelineKind } from '../chainTypes'
 import { DonationSearch } from '../components/DonationSearch'
 import { RecordMeta } from '../components/RecordMeta'
+import { HashVerifier } from '../components/HashVerifier'
 import { categoryLabel, reasonLabel, reviewLabels } from '../data/demoLabels'
 import { formatPaise } from '../lib/money'
 import { formatTimestamp, shortHex } from '../lib/display'
@@ -108,13 +109,12 @@ export function TracePage({ data, donationId }: TracePageProps) {
                         <strong>{formatPaise(expense.amountPaise)}</strong>
                       </div>
 
-                      <div className="evidence-summary" aria-label={`Evidence summary for ${expense.id}`}>
-                        <span className="evidence-neutral">✓ Claim recorded</span>
-                        <span className="evidence-pending">◇ File not checked</span>
-                        <span data-status={expense.latestReview}>
-                          {reviewLabels[expense.latestReview]}
-                        </span>
-                      </div>
+                      <HashVerifier
+                        expenseId={expense.id}
+                        expectedDigest={expense.receiptHash}
+                        latestReview={expense.latestReview}
+                        source={data.source}
+                      />
 
                       <dl className="expense-details">
                         <div>

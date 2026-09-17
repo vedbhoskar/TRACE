@@ -618,6 +618,183 @@ h2 {
   background: #eff2f6;
 }
 
+.integrity-idle,
+.integrity-hashing {
+  color: #68768c;
+  background: #eff2f6;
+}
+
+.integrity-matched {
+  color: var(--green);
+  background: var(--green-soft);
+}
+
+.integrity-mismatched,
+.integrity-error {
+  color: var(--red);
+  background: var(--red-soft);
+}
+
+.integrity-panel {
+  margin: 18px 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fbfcff;
+}
+
+.integrity-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.integrity-heading strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--navy);
+  font-size: 0.9rem;
+}
+
+.local-only {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  border-radius: 999px;
+  color: var(--green);
+  background: var(--green-soft);
+  font-size: 0.66rem;
+  font-weight: 800;
+}
+
+.sample-downloads {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 17px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.sample-downloads > span {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 750;
+}
+
+.sample-downloads > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.sample-downloads a {
+  padding: 5px 8px;
+  border: 1px solid #cdd8e8;
+  border-radius: 8px;
+  color: var(--blue);
+  background: white;
+  font-size: 0.68rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.file-picker {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 4px 14px;
+  margin-top: 16px;
+  padding: 13px;
+  border: 1px dashed #aebbd0;
+  border-radius: 10px;
+  background: white;
+}
+
+.file-picker > span {
+  grid-row: 1 / 3;
+  padding: 8px 11px;
+  border-radius: 8px;
+  color: white;
+  background: var(--blue);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.file-picker input {
+  min-width: 0;
+  color: var(--ink);
+  font-size: 0.72rem;
+}
+
+.file-picker input::file-selector-button {
+  display: none;
+}
+
+.file-picker small {
+  color: var(--muted);
+  font-size: 0.66rem;
+}
+
+.verification-result {
+  margin-top: 12px;
+  padding: 13px;
+  border-radius: 10px;
+  color: var(--muted);
+  background: #f0f3f7;
+}
+
+.verification-result > strong {
+  display: block;
+  margin-bottom: 5px;
+  color: inherit;
+  font-size: 0.8rem;
+}
+
+.verification-result p {
+  margin-bottom: 0;
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
+.verification-result small,
+.verification-result code {
+  display: block;
+  margin-top: 7px;
+}
+
+.verification-result small {
+  font-size: 0.66rem;
+}
+
+.verification-result code {
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 0.63rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.result-matched {
+  color: var(--green);
+  background: var(--green-soft);
+}
+
+.result-mismatched,
+.result-error {
+  color: var(--red);
+  background: var(--red-soft);
+}
+
+.privacy-note {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.66rem;
+  line-height: 1.55;
+}
+
 .expense-details {
   display: grid;
   grid-template-columns: 1.3fr 1fr 1fr;
@@ -896,9 +1073,24 @@ footer p {
 
   .donation-search > div,
   .allocation-heading,
-  .expense-title {
+  .expense-title,
+  .integrity-heading,
+  .sample-downloads {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .sample-downloads > div {
+    justify-content: flex-start;
+  }
+
+  .file-picker {
+    grid-template-columns: 1fr;
+  }
+
+  .file-picker > span {
+    grid-row: auto;
+    width: fit-content;
   }
 
   .donation-search button {
