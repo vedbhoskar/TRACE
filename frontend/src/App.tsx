@@ -1,73 +1,83 @@
+import { useEffect, useState } from 'react'
 import './App.css'
-import { demoDataset } from './data/campaign'
-import { categoryLabels, reviewLabels } from './data/demoLabels'
-import { computeMetrics } from './lib/metrics'
-import { formatPaise } from './lib/money'
-
-const metrics = computeMetrics(demoDataset)
+import { SourceBadge } from './components/SourceBadge'
+import { useProofData } from './hooks/useProofData'
+import { parseHashRoute } from './lib/route'
+import { CampaignPage } from './pages/CampaignPage'
+import { TracePage } from './pages/TracePage'
 
 function App() {
+  const proof = useProofData()
+  const [route, setRoute] = useState(() => parseHashRoute(window.location.hash))
+
+  useEffect(() => {
+    const updateRoute = () => {
+      setRoute(parseHashRoute(window.location.hash))
+      window.scrollTo({ top: 0, behavior: 'instant' })
+    }
+    window.addEventListener('hashchange', updateRoute)
+    return () => window.removeEventListener('hashchange', updateRoute)
+  }, [])
+
   return (
-    <main>
-      <header>
-        <p className="eyebrow">TRACE Proof · Stage 1 fixture</p>
-        <h1>{demoDataset.campaign.title}</h1>
-        <p className="disclaimer">
-          Synthetic demonstration data. This is a proof registry scaffold, not a payment record.
-        </p>
+    <>
+      <header className="site-header">
+        <a className="brand" href="#/" aria-label="TRACE Proof campaign home">
+          <span className="brand-mark" aria-hidden="true">T</span>
+          <span><strong>TRACE</strong> Proof</span>
+        </a>
+        <nav aria-label="Primary navigation">
+          <a href="#/">Campaign</a>
+          <a href="#/trace/DON-8F42A1">Trace explorer</a>
+        </nav>
       </header>
 
-      <section className="metrics" aria-label="Fixture totals">
-        <article>
-          <span>Recorded donation</span>
-          <strong>{formatPaise(metrics.recordedDonationsPaise)}</strong>
-        </article>
-        <article>
-          <span>Expense claims</span>
-          <strong>{formatPaise(metrics.expenseClaimsPaise)}</strong>
-        </article>
-        <article>
-          <span>Allocated, not claimed</span>
-          <strong>{formatPaise(metrics.allocatedNotClaimedPaise)}</strong>
-        </article>
-        <article>
-          <span>Claimed utilization</span>
-          <strong>{metrics.claimedUtilization}</strong>
-        </article>
-      </section>
+      <main>
+        {proof.status === 'loading' && (
+          <section className="state-panel loading-state" aria-live="polite">
+            <span className="loading-ring" aria-hidden="true" />
+            <p className="eyebrow">Reading Ethereum Sepolia</p>
+            <h1>Reconstructing the public trail</h1>
+            <p>Checking the deployment, choosing one sync block, and loading confirmed events.</p>
+          </section>
+        )}
 
-      <section className="trace" aria-labelledby="trace-heading">
+        {proof.status === 'error' && (
+          <section className="state-panel error-state" role="alert">
+            <span className="state-icon" aria-hidden="true">!</span>
+            <p className="eyebrow">Unable to check Sepolia</p>
+            <h1>Live chain data is unavailable</h1>
+            <p>{proof.error}</p>
+            <div className="state-actions">
+              <button type="button" onClick={() => void proof.refresh()}>Retry live read</button>
+              <button type="button" className="secondary-button" onClick={proof.useSnapshot}>
+                View labeled cached snapshot
+              </button>
+            </div>
+            <small>The snapshot is never substituted automatically and cannot enable writes.</small>
+          </section>
+        )}
+
+        {proof.status === 'ready' && (
+          <>
+            <SourceBadge data={proof.data} onRefresh={() => void proof.refresh()} />
+            {route.page === 'campaign' ? (
+              <CampaignPage data={proof.data} />
+            ) : (
+              <TracePage data={proof.data} donationId={route.donationId} />
+            )}
+          </>
+        )}
+      </main>
+
+      <footer>
         <div>
-          <p className="eyebrow">Donation {demoDataset.donations[0].id}</p>
-          <h2 id="trace-heading">Canonical three-branch trace</h2>
+          <strong>TRACE Proof</strong>
+          <span>Synthetic public testnet demonstration</span>
         </div>
-        <div className="branches">
-          {demoDataset.allocations.map((allocation) => {
-            const expense = demoDataset.expenses.find(
-              (item) => item.allocationId === allocation.id,
-            )
-
-            return (
-              <article key={allocation.id}>
-                <div className="branch-heading">
-                  <span>{categoryLabels[allocation.category]}</span>
-                  <code>{allocation.id}</code>
-                </div>
-                <strong>{formatPaise(allocation.amountPaise)}</strong>
-                {expense && (
-                  <p>
-                    {expense.id}: {formatPaise(expense.amountPaise)} ·{' '}
-                    <span data-status={expense.latestReview}>
-                      {reviewLabels[expense.latestReview]}
-                    </span>
-                  </p>
-                )}
-              </article>
-            )
-          })}
-        </div>
-      </section>
-    </main>
+        <p>Proof registry, not payment custody or an authenticity guarantee.</p>
+      </footer>
+    </>
   )
 }
 

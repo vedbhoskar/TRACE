@@ -1,32 +1,42 @@
-# React + TypeScript + Vite
+# TRACE Proof frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React, TypeScript, Vite, and ethers power the public TRACE Proof campaign and
+donation-trace views. A visitor does not need a wallet: the app reads the
+exported ProofRegistry deployment from Ethereum Sepolia and reconstructs the
+confirmed record hierarchy from events.
 
-Currently, two official plugins are available:
+## Run locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+The default public Sepolia RPC can be overridden by copying `.env.example` to
+`.env` and setting `VITE_SEPOLIA_RPC_URL`. Every `VITE_*` value is public; never
+put a private key, mnemonic, wallet file, or secret RPC credential there.
+
+## Validate
+
+```bash
+npm test
+npm run build
+npm run lint
+```
+
+## Public data behavior
+
+- `src/generated/deployment.json` is the canonical network, address, deployment
+  block, and public transaction configuration.
+- The read repository checks the configured chain and immutable contract roles,
+  chooses one synchronization block, and reads logs from the deployment block
+  in bounded adaptive chunks.
+- Donation, allocation, expense, latest-review, review-history, and timeline
+  views are reconstructed from confirmed events.
+- Unknown donation IDs show “No record found” only after a successful chain
+  read. RPC failures show “Unable to check Sepolia.”
+- A bundled canonical snapshot is available only through an explicit error-state
+  action and is labeled `Cached snapshot · … · not freshly checked`.
+
+The current UI is read-only. Receipt comparison, wallet-backed expense
+submission, and reviewer writes belong to later build stages.
