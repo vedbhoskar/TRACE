@@ -37,7 +37,7 @@ Copy the relevant `.env.example` to `.env` only when network configuration is ne
 
 ## Current scope
 
-Stages 0–6 establish a reproducible toolchain, the canonical synthetic fixture, a tested ProofRegistry contract, a fully seeded Sepolia deployment, wallet-free public chain reads, local receipt-integrity comparison, and an injected-wallet NGO expense-submission workspace. The fixture includes validated short IDs, integer-paise money utilities, exact-byte SHA-256 receipt fixtures, and reconciled demonstration metrics. The contract enforces immutable NGO/reviewer roles, parent capacity limits, append-only claims, and preserved review history.
+Stages 0–7 establish a reproducible toolchain, the canonical synthetic fixture, a tested ProofRegistry contract, a fully seeded Sepolia deployment, wallet-free public chain reads, local receipt-integrity comparison, an injected-wallet NGO expense-submission workspace, and a separately authorized reviewer workspace. The fixture includes validated short IDs, integer-paise money utilities, exact-byte SHA-256 receipt fixtures, and reconciled demonstration metrics. The contract enforces immutable NGO/reviewer roles, parent capacity limits, append-only claims, and preserved review history.
 
 Public deployment:
 
@@ -60,5 +60,7 @@ npm run lint
 The Stage 3 verifier confirms ₹10,000 recorded, ₹10,000 allocated, ₹7,700 claimed, all frozen receipt digests, the three expected latest review states, and all nine canonical events. Stage 4 reads that exported deployment in a fresh browser without a wallet, reconstructs the full parent-child trail and review history, shows real explorer references, and keeps unknown-record, loading, RPC-error, and explicitly selected cached-snapshot states distinct. Stage 5 downloads fictional samples and compares a user-selected receipt locally against the displayed digest without uploading or rendering its contents. Stage 6 prepares a canonical expense ID and exact receipt digest, enforces wallet/network/role and remaining-capacity checks, previews the exact claim, and submits through the configured NGO's injected wallet with explicit transaction lifecycle and recovery states. No private signing material is bundled in the frontend.
 
 The final Stage 6 live acceptance transaction is intentionally not included yet: it requires explicit operator confirmation in the NGO wallet. Until that transaction is approved, the public deployment retains the initial ₹7,700 claimed total and ₹1,200 Food allocation remainder.
+
+Stage 7 exposes unreviewed and flagged claims to the configured reviewer wallet, keeps file integrity checks independent from reviewer judgment, previews Attested/Flagged decisions and reason codes, and preserves every previous review event after confirmation. The final live reviewer acceptance transaction likewise requires explicit operator approval and has not been sent by the implementation process.
 
 All planned demonstration entities, receipts, and amounts are synthetic. No real donation or real nonprofit activity is represented.

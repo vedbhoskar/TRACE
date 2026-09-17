@@ -4,10 +4,12 @@ export type AppRoute =
   | { page: 'campaign' }
   | { page: 'trace'; donationId: string }
   | { page: 'submit' }
+  | { page: 'review' }
 
 export function parseHashRoute(hash: string): AppRoute {
   const path = hash.replace(/^#/, '') || '/'
   if (/^\/submit\/?$/.test(path)) return { page: 'submit' }
+  if (/^\/review\/?$/.test(path)) return { page: 'review' }
   const match = path.match(/^\/trace\/([^/]+)\/?$/)
   if (!match) return { page: 'campaign' }
   let decoded: string

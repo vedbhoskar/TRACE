@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { assertNgoWallet, readWallet, unavailableWallet, walletConfig, watchWallet, type InjectedProvider } from './wallet'
+import { assertNgoWallet, assertReviewerWallet, readWallet, unavailableWallet, walletConfig, watchWallet, type InjectedProvider } from './wallet'
 
 function provider(accounts: string[], chainId = '0xaa36a7'): InjectedProvider {
   return {
@@ -19,6 +19,15 @@ describe('injected wallet state', () => {
   it('authorizes only the configured NGO on Sepolia', async () => {
     const state = await readWallet(provider([walletConfig.ngoAddress]))
     expect(state).toMatchObject({ connected: true, correctNetwork: true, authorizedNgo: true })
+  })
+
+  it('authorizes the configured reviewer separately from the NGO', async () => {
+    const reviewer = await readWallet(provider([walletConfig.reviewerAddress]))
+    const ngo = await readWallet(provider([walletConfig.ngoAddress]))
+    expect(reviewer).toMatchObject({ authorizedReviewer: true, authorizedNgo: false })
+    expect(ngo).toMatchObject({ authorizedReviewer: false, authorizedNgo: true })
+    expect(() => assertReviewerWallet(reviewer)).not.toThrow()
+    expect(() => assertReviewerWallet(ngo)).toThrow('Only')
   })
 
   it('rejects a different account without mistaking it for a disconnected wallet', async () => {

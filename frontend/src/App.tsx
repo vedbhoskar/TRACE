@@ -6,6 +6,7 @@ import { parseHashRoute } from './lib/route'
 import { CampaignPage } from './pages/CampaignPage'
 import { TracePage } from './pages/TracePage'
 import { SubmitPage } from './pages/SubmitPage'
+import { ReviewPage } from './pages/ReviewPage'
 
 function App() {
   const proof = useProofData()
@@ -31,6 +32,7 @@ function App() {
           <a href="#/">Campaign</a>
           <a href="#/trace/DON-8F42A1">Trace explorer</a>
           <a href="#/submit">Submit claim</a>
+          <a href="#/review">Review</a>
         </nav>
       </header>
 
@@ -67,6 +69,8 @@ function App() {
               <CampaignPage data={proof.data} />
             ) : route.page === 'submit' ? (
               <SubmitPage data={proof.data} onRefresh={proof.refresh} />
+            ) : route.page === 'review' ? (
+              <ReviewPage data={proof.data} onRefresh={proof.refresh} />
             ) : (
               <TracePage data={proof.data} donationId={route.donationId} />
             )}

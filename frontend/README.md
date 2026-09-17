@@ -54,7 +54,15 @@ npm run lint
   are blocked; rejection/failure preserves the form; uncertain confirmation
   checks the on-chain expense before a retry. A successful receipt refreshes
   public records and links to the real transaction and expense trail.
+- `#/review` lists unreviewed and flagged claims with their confirmed fields,
+  receipt fingerprint checker, latest reviewer state, and append-only history.
+  Only the exported reviewer address on Sepolia can prepare an Attested or
+  Flagged decision with one of the four supported nonzero reason codes.
+- Review submission repeats role/network and latest-state checks immediately
+  before signing, blocks identical status/reason repeats and duplicate clicks,
+  preserves choices after rejection/failure, and recovers an interrupted
+  receipt wait only when the requested latest review is visible on-chain.
 
 The frontend never reads a private key. The Stage 6 live acceptance write must
-be explicitly approved in the configured NGO browser wallet. Reviewer writes
-belong to Stage 7.
+be explicitly approved in the configured NGO browser wallet. Stage 7 reviewer
+writes must be separately approved in the configured reviewer browser wallet.

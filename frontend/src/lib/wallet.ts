@@ -5,6 +5,7 @@ interface DeploymentConfig {
   chainId: number
   contractAddress: string
   ngoAddress: string
+  reviewerAddress: string
 }
 
 export interface InjectedProvider extends Eip1193Provider {
@@ -19,6 +20,7 @@ export interface WalletSnapshot {
   chainId: number | null
   correctNetwork: boolean
   authorizedNgo: boolean
+  authorizedReviewer: boolean
 }
 
 export interface ExpenseTransaction {
@@ -61,6 +63,7 @@ export function unavailableWallet(): WalletSnapshot {
     chainId: null,
     correctNetwork: false,
     authorizedNgo: false,
+    authorizedReviewer: false,
   }
 }
 
@@ -82,6 +85,7 @@ export async function readWallet(
     chainId,
     correctNetwork: chainId === deployment.chainId,
     authorizedNgo: account !== null && getAddress(account) === getAddress(deployment.ngoAddress),
+    authorizedReviewer: account !== null && getAddress(account) === getAddress(deployment.reviewerAddress),
   }
 }
 
@@ -101,6 +105,12 @@ export function assertNgoWallet(snapshot: WalletSnapshot): void {
   if (!snapshot.authorizedNgo) throw new Error('Only the configured NGO wallet can submit expenses')
 }
 
+export function assertReviewerWallet(snapshot: WalletSnapshot): void {
+  if (!snapshot.connected) throw new Error('Connect the configured reviewer wallet before reviewing')
+  if (!snapshot.correctNetwork) throw new Error(`Switch the wallet to Sepolia chain ${deployment.chainId}`)
+  if (!snapshot.authorizedReviewer) throw new Error('Only the configured reviewer wallet can record decisions')
+}
+
 export function injectedProvider(): InjectedProvider | undefined {
   return (window as typeof window & { ethereum?: InjectedProvider }).ethereum
 }
@@ -108,5 +118,6 @@ export function injectedProvider(): InjectedProvider | undefined {
 export const walletConfig = {
   chainId: deployment.chainId,
   ngoAddress: getAddress(deployment.ngoAddress),
+  reviewerAddress: getAddress(deployment.reviewerAddress),
   contractAddress: getAddress(deployment.contractAddress),
 }

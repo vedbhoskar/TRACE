@@ -12,6 +12,11 @@ describe('hash routes', () => {
     expect(parseHashRoute('#/submit/')).toEqual({ page: 'submit' })
   })
 
+  it('routes the reviewer workspace independently of record routes', () => {
+    expect(parseHashRoute('#/review')).toEqual({ page: 'review' })
+    expect(parseHashRoute('#/review/')).toEqual({ page: 'review' })
+  })
+
   it('normalizes a valid donation trace ID', () => {
     expect(parseHashRoute('#/trace/don-8f42a1')).toEqual({
       page: 'trace',
