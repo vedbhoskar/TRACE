@@ -24,6 +24,22 @@ npm run build
 npm run lint
 ```
 
+## Static hosting
+
+The production build uses hash routes and relative assets, so it can be served
+from the GitHub Pages project path without server-side rewrites:
+
+```bash
+npm run build
+npm run preview
+```
+
+The prepared deployment target is `https://vedbhoskar.github.io/TRACE/`. It is
+not live until the repository owner approves, commits, and pushes the Stage 8
+GitHub Pages workflow. The workflow runs tests, lint, and the production build
+before publishing `frontend/dist`. `VITE_SEPOLIA_RPC_URL`, when supplied, is a
+public browser setting and its provider must allow the hosted origin.
+
 ## Public data behavior
 
 - `src/generated/deployment.json` is the canonical network, address, deployment
@@ -54,6 +70,14 @@ npm run lint
   are blocked; rejection/failure preserves the form; uncertain confirmation
   checks the on-chain expense before a retry. A successful receipt refreshes
   public records and links to the real transaction and expense trail.
+- A confirmed transaction remains visible with its explorer link if the
+  subsequent public refresh fails. A nonblocking source warning offers a retry
+  while preserving the last confirmed read. Exhausted allocations no longer
+  leave a fresh form bound to stale capacity.
+- Account or network changes during approval fail safely before a hash exists;
+  changes while confirmation is pending preserve the hash and move the action
+  to an explicit uncertain state. Late callbacks from the prior wallet context
+  cannot replace that state.
 - `#/review` lists unreviewed and flagged claims with their confirmed fields,
   receipt fingerprint checker, latest reviewer state, and append-only history.
   Only the exported reviewer address on Sepolia can prepare an Attested or

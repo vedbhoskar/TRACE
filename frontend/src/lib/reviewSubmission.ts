@@ -25,7 +25,7 @@ export interface ReviewGateway {
 export type ReviewUpdate =
   | { status: 'awaiting-wallet' }
   | { status: 'pending'; transactionHash: string }
-  | { status: 'confirmed'; transactionHash: string; recovered: boolean }
+  | { status: 'confirmed'; transactionHash: string; recovered: boolean; refreshed: boolean }
   | { status: 'rejected'; message: string }
   | { status: 'failed'; transactionHash?: string; message: string }
   | { status: 'uncertain'; transactionHash?: string; message: string }
@@ -37,6 +37,16 @@ const reasonCodes = {
   AMOUNT_DISCREPANCY: 3,
   OTHER: 4,
 } as const
+
+export function reviewStateAfterWalletChange(state: ReviewUpdate | null): ReviewUpdate | null {
+  if (state?.status === 'awaiting-wallet') {
+    return { status: 'failed', message: 'The wallet account or network changed before a transaction hash was received. Your review choices were preserved.' }
+  }
+  if (state?.status === 'pending') {
+    return { status: 'uncertain', transactionHash: state.transactionHash, message: 'The wallet account or network changed while confirmation was pending. Check this transaction before retrying.' }
+  }
+  return state
+}
 
 export function prepareReview(input: {
   expense: ChainExpense | undefined
@@ -78,7 +88,7 @@ export async function submitPreparedReview(
   gateway: ReviewGateway,
   review: PreparedReview,
   update: (state: ReviewUpdate) => void,
-  afterConfirmed: () => Promise<void> = async () => undefined,
+  afterConfirmed: () => Promise<boolean | void> = async () => undefined,
 ): Promise<ReviewUpdate> {
   const before = await gateway.checkReview(review.expenseId)
   if (before === 'missing') {
@@ -117,16 +127,18 @@ export async function submitPreparedReview(
       update(result)
       return result
     }
-    const result: ReviewUpdate = { status: 'confirmed', transactionHash: transaction.hash, recovered: false }
+    let refreshed = false
+    try { refreshed = (await afterConfirmed()) !== false } catch { refreshed = false }
+    const result: ReviewUpdate = { status: 'confirmed', transactionHash: transaction.hash, recovered: false, refreshed }
     update(result)
-    await afterConfirmed()
     return result
   } catch {
     const after = await gateway.checkReview(review.expenseId)
     if (matches(after, review)) {
-      const result: ReviewUpdate = { status: 'confirmed', transactionHash: transaction.hash, recovered: true }
+      let refreshed = false
+      try { refreshed = (await afterConfirmed()) !== false } catch { refreshed = false }
+      const result: ReviewUpdate = { status: 'confirmed', transactionHash: transaction.hash, recovered: true, refreshed }
       update(result)
-      await afterConfirmed()
       return result
     }
     const result: ReviewUpdate = {

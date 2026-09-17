@@ -13,7 +13,7 @@ export interface PreparedExpense {
 export type SubmissionUpdate =
   | { status: 'awaiting-wallet' }
   | { status: 'pending'; transactionHash: string }
-  | { status: 'confirmed'; transactionHash: string; recovered: boolean }
+  | { status: 'confirmed'; transactionHash: string; recovered: boolean; refreshed: boolean }
   | { status: 'rejected'; message: string }
   | { status: 'failed'; transactionHash?: string; message: string }
   | { status: 'uncertain'; transactionHash?: string; message: string }
@@ -37,6 +37,25 @@ export function createSubmissionGuard(): SubmissionGuard {
       }
     },
   }
+}
+
+export function expenseStateAfterWalletChange(state: SubmissionUpdate | null): SubmissionUpdate | null {
+  if (state?.status === 'awaiting-wallet') {
+    return { status: 'failed', message: 'The wallet account or network changed before a transaction hash was received. Your form has been preserved.' }
+  }
+  if (state?.status === 'pending') {
+    return { status: 'uncertain', transactionHash: state.transactionHash, message: 'The wallet account or network changed while confirmation was pending. Check this transaction before retrying.' }
+  }
+  return state
+}
+
+export function resolveAllocationId(
+  currentId: string,
+  availableIds: readonly string[],
+  preserveCurrent: boolean,
+): string {
+  if (preserveCurrent || availableIds.includes(currentId)) return currentId
+  return availableIds[0] ?? ''
 }
 
 export function generateExpenseId(now = Date.now(), random = crypto.getRandomValues(new Uint32Array(1))[0]): string {
@@ -82,7 +101,7 @@ export async function submitPreparedExpense(
   gateway: ExpenseGateway,
   expense: PreparedExpense,
   update: (state: SubmissionUpdate) => void,
-  afterConfirmed: () => Promise<void> = async () => undefined,
+  afterConfirmed: () => Promise<boolean | void> = async () => undefined,
 ): Promise<SubmissionUpdate> {
   const before = await gateway.checkExpense(expense.expenseId)
   if (before === 'exists') {
@@ -120,16 +139,18 @@ export async function submitPreparedExpense(
       update(result)
       return result
     }
-    const result: SubmissionUpdate = { status: 'confirmed', transactionHash: transaction.hash, recovered: false }
+    let refreshed = false
+    try { refreshed = (await afterConfirmed()) !== false } catch { refreshed = false }
+    const result: SubmissionUpdate = { status: 'confirmed', transactionHash: transaction.hash, recovered: false, refreshed }
     update(result)
-    await afterConfirmed()
     return result
   } catch {
     const after = await gateway.checkExpense(expense.expenseId)
     if (after === 'exists') {
-      const result: SubmissionUpdate = { status: 'confirmed', transactionHash: transaction.hash, recovered: true }
+      let refreshed = false
+      try { refreshed = (await afterConfirmed()) !== false } catch { refreshed = false }
+      const result: SubmissionUpdate = { status: 'confirmed', transactionHash: transaction.hash, recovered: true, refreshed }
       update(result)
-      await afterConfirmed()
       return result
     }
     const result: SubmissionUpdate = {

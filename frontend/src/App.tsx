@@ -64,7 +64,12 @@ function App() {
 
         {proof.status === 'ready' && (
           <>
-            <SourceBadge data={proof.data} onRefresh={() => void proof.refresh()} />
+            <SourceBadge
+              data={proof.data}
+              onRefresh={() => void proof.refresh()}
+              refreshError={proof.refreshError}
+              refreshing={proof.refreshing}
+            />
             {route.page === 'campaign' ? (
               <CampaignPage data={proof.data} />
             ) : route.page === 'submit' ? (

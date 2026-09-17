@@ -4,7 +4,7 @@ import { createCanonicalSnapshot } from '../data/snapshot'
 
 type ProofDataState =
   | { status: 'loading'; data: null; error: null }
-  | { status: 'ready'; data: ProofData; error: null }
+  | { status: 'ready'; data: ProofData; error: null; refreshError: string | null; refreshing: boolean }
   | { status: 'error'; data: null; error: string }
 
 function publicError(error: unknown): string {
@@ -30,26 +30,31 @@ export function useProofData() {
   })
   const requestNumber = useRef(0)
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (): Promise<boolean> => {
     const request = ++requestNumber.current
     setState((current) => current.status === 'ready'
-      ? current
+      ? { ...current, refreshError: null, refreshing: true }
       : { status: 'loading', data: null, error: null })
     try {
       const data = await loadLiveProofData()
       if (request === requestNumber.current) {
-        setState({ status: 'ready', data, error: null })
+        setState({ status: 'ready', data, error: null, refreshError: null, refreshing: false })
+        return true
       }
     } catch (error) {
       if (request === requestNumber.current) {
-        setState({ status: 'error', data: null, error: publicError(error) })
+        const message = publicError(error)
+        setState((current) => current.status === 'ready'
+          ? { ...current, refreshError: message, refreshing: false }
+          : { status: 'error', data: null, error: message })
       }
     }
+    return false
   }, [])
 
   const useSnapshot = useCallback(() => {
     requestNumber.current += 1
-    setState({ status: 'ready', data: createCanonicalSnapshot(), error: null })
+    setState({ status: 'ready', data: createCanonicalSnapshot(), error: null, refreshError: null, refreshing: false })
   }, [])
 
   useEffect(() => {
@@ -57,7 +62,7 @@ export function useProofData() {
     void loadLiveProofData()
       .then((data) => {
         if (request === requestNumber.current) {
-          setState({ status: 'ready', data, error: null })
+          setState({ status: 'ready', data, error: null, refreshError: null, refreshing: false })
         }
       })
       .catch((error: unknown) => {

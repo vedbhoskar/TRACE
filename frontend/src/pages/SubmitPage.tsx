@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import type { ProofData } from '../chainTypes'
 import { useWallet } from '../hooks/useWallet'
 import {
   generateExpenseId,
   prepareExpense,
   createSubmissionGuard,
+  expenseStateAfterWalletChange,
+  resolveAllocationId,
   submitPreparedExpense,
   type SubmissionUpdate,
 } from '../lib/expenseSubmission'
@@ -15,7 +17,7 @@ import { walletConfig } from '../lib/wallet'
 
 interface SubmitPageProps {
   data: ProofData
-  onRefresh: () => Promise<void>
+  onRefresh: () => Promise<boolean>
 }
 
 type HashState =
@@ -34,7 +36,13 @@ function statusCopy(state: SubmissionUpdate | null): { title: string; body: stri
   if (!state) return null
   if (state.status === 'awaiting-wallet') return { title: 'Awaiting wallet approval', body: 'Review the exact claim in your wallet. No transaction hash exists yet.', tone: 'pending' }
   if (state.status === 'pending') return { title: 'Transaction pending', body: 'The claim was broadcast and is waiting for a successful receipt.', tone: 'pending' }
-  if (state.status === 'confirmed') return { title: 'Claim confirmed', body: state.recovered ? 'The receipt wait was interrupted, but the expense was found on-chain.' : 'The successful receipt was mined and live records were refreshed.', tone: 'success' }
+  if (state.status === 'confirmed') return {
+    title: 'Claim confirmed',
+    body: state.refreshed
+      ? state.recovered ? 'The receipt wait was interrupted, but the expense was found on-chain and records were refreshed.' : 'The successful receipt was mined and live records were refreshed.'
+      : 'The transaction is confirmed. Public records could not be refreshed yet; the transaction link is preserved below.',
+    tone: state.refreshed ? 'success' : 'warning',
+  }
   if (state.status === 'rejected') return { title: 'Wallet request rejected', body: state.message, tone: 'warning' }
   if (state.status === 'uncertain') return { title: 'Transaction status uncertain', body: state.message, tone: 'warning' }
   return { title: 'Submission failed', body: state.message, tone: 'error' }
@@ -53,22 +61,30 @@ export function SubmitPage({ data, onRefresh }: SubmitPageProps) {
   const submissionGuard = useRef(createSubmissionGuard())
   const hashRequest = useRef(0)
   const previousWalletRevision = useRef(wallet.revision)
+  const currentWalletRevision = useRef(wallet.revision)
 
   useEffect(() => {
+    currentWalletRevision.current = wallet.revision
     if (previousWalletRevision.current !== wallet.revision) {
       previousWalletRevision.current = wallet.revision
-      setSubmission(null)
+      setSubmission(expenseStateAfterWalletChange)
     }
   }, [wallet.revision])
 
-  const allocation = data.allocations.find((item) => item.id === allocationId)
+  const confirmed = submission?.status === 'confirmed'
+  const selectedAllocationId = resolveAllocationId(
+    allocationId,
+    availableAllocations.map((item) => item.id),
+    confirmed,
+  )
+  const allocation = data.allocations.find((item) => item.id === selectedAllocationId)
   const remaining = allocation ? allocation.amountPaise - allocation.claimedPaise : 0n
-  const prepared = useMemo(() => {
+  const prepared = (() => {
     try {
       return {
         value: prepareExpense({
           expenseId,
-          allocationId,
+          allocationId: selectedAllocationId,
           amount,
           receiptHash: hash.digest,
           allocations: data.allocations,
@@ -79,12 +95,15 @@ export function SubmitPage({ data, onRefresh }: SubmitPageProps) {
     } catch (error) {
       return { value: null, error: error instanceof Error ? error.message : 'Claim details are invalid' }
     }
-  }, [allocationId, amount, data.allocations, data.expenses, expenseId, hash.digest])
+  })()
 
   const canWrite = live && wallet.connected && wallet.correctNetwork && wallet.authorizedNgo
   const busy = submission?.status === 'awaiting-wallet' || submission?.status === 'pending'
   const transactionHash = submission && 'transactionHash' in submission ? submission.transactionHash : undefined
   const displayStatus = statusCopy(submission)
+  const allocationOptions = confirmed && allocation && !availableAllocations.some((item) => item.id === allocation.id)
+    ? [allocation, ...availableAllocations]
+    : availableAllocations
 
   async function chooseReceipt(file: File | undefined) {
     const request = ++hashRequest.current
@@ -116,12 +135,16 @@ export function SubmitPage({ data, onRefresh }: SubmitPageProps) {
     if (!prepared.value || !canWrite || !wallet.provider) return
     setSubmission(null)
     await submissionGuard.current.run(async () => {
+      const submittedWalletRevision = wallet.revision
+      const update = (state: SubmissionUpdate) => {
+        if (currentWalletRevision.current === submittedWalletRevision) setSubmission(state)
+      }
       try {
         const { createExpenseGateway } = await import('../lib/walletWriter')
         const gateway = await createExpenseGateway(wallet.provider!)
-        await submitPreparedExpense(gateway, prepared.value!, setSubmission, onRefresh)
+        await submitPreparedExpense(gateway, prepared.value!, update, onRefresh)
       } catch {
-        setSubmission({ status: 'failed', message: 'The wallet adapter could not prepare this transaction. Your form has been preserved.' })
+        update({ status: 'failed', message: 'The wallet adapter could not prepare this transaction. Your form has been preserved.' })
       }
     })
   }
@@ -132,6 +155,7 @@ export function SubmitPage({ data, onRefresh }: SubmitPageProps) {
     setDescription('')
     setHash(initialHash)
     setSubmission(null)
+    setAllocationId(availableAllocations[0]?.id ?? '')
   }
 
   return (
@@ -166,33 +190,33 @@ export function SubmitPage({ data, onRefresh }: SubmitPageProps) {
           <div className="section-heading"><span>01</span><div><h2>Claim details</h2><p>Allocation capacity is reconstructed from confirmed records.</p></div></div>
           <label>
             Allocation
-            <select value={allocationId} onChange={(event) => { setAllocationId(event.target.value); setSubmission(null) }} disabled={busy}>
-              {availableAllocations.map((item) => (
-                <option key={item.id} value={item.id}>{item.id} · {formatPaise(item.amountPaise - item.claimedPaise)} remaining</option>
+            <select value={selectedAllocationId} onChange={(event) => { setAllocationId(event.target.value); setSubmission(null) }} disabled={busy || confirmed}>
+              {allocationOptions.map((item) => (
+                <option key={item.id} value={item.id}>{item.id} · {formatPaise(item.amountPaise - item.claimedPaise)} remaining{confirmed && item.id === selectedAllocationId ? ' · submitted' : ''}</option>
               ))}
             </select>
           </label>
           <div className="capacity-row"><span>Remaining capacity</span><strong>{formatPaise(remaining, true)}</strong></div>
           <label>
             Amount in INR
-            <input inputMode="decimal" placeholder="1200.00" value={amount} onChange={(event) => { setAmount(event.target.value); setSubmission(null) }} disabled={busy} />
+            <input inputMode="decimal" placeholder="1200.00" value={amount} onChange={(event) => { setAmount(event.target.value); setSubmission(null) }} disabled={busy || confirmed} />
           </label>
           <label>
             Expense ID
             <div className="inline-field">
-              <input value={expenseId} onChange={(event) => { setExpenseId(event.target.value); setSubmission(null) }} disabled={busy} />
-              <button type="button" className="secondary-button" onClick={() => setExpenseId(generateExpenseId())} disabled={busy}>Regenerate</button>
+              <input value={expenseId} onChange={(event) => { setExpenseId(event.target.value); setSubmission(null) }} disabled={busy || confirmed} />
+              <button type="button" className="secondary-button" onClick={() => setExpenseId(generateExpenseId())} disabled={busy || confirmed}>Regenerate</button>
             </div>
           </label>
           <label>
             Local description <small>(not stored on-chain)</small>
-            <input value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Optional note for this browser session" disabled={busy} />
+            <input value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Optional note for this browser session" disabled={busy || confirmed} />
           </label>
 
           <div className="section-heading"><span>02</span><div><h2>Receipt fingerprint</h2><p>The selected bytes stay in this browser. Maximum {Math.round(MAX_RECEIPT_BYTES / 1024 / 1024)} MB.</p></div></div>
           <label className="file-choice">
             <span>{hash.fileName ?? 'Choose receipt file'}</span>
-            <input type="file" onChange={(event) => void chooseReceipt(event.target.files?.[0])} disabled={busy} />
+            <input type="file" onChange={(event) => void chooseReceipt(event.target.files?.[0])} disabled={busy || confirmed} />
           </label>
           {hash.status === 'hashing' && <p className="field-status">Hashing exact file bytes…</p>}
           {hash.status === 'error' && <p className="field-error" role="alert">{hash.error}</p>}
@@ -204,15 +228,15 @@ export function SubmitPage({ data, onRefresh }: SubmitPageProps) {
           <h2>Review before signing</h2>
           <dl>
             <div><dt>Expense ID</dt><dd>{expenseId || '—'}</dd></div>
-            <div><dt>Allocation</dt><dd>{allocationId || '—'}</dd></div>
+            <div><dt>Allocation</dt><dd>{selectedAllocationId || '—'}</dd></div>
             <div><dt>Amount</dt><dd>{prepared.value ? formatPaise(prepared.value.amountPaise, true) : amount || '—'}</dd></div>
             <div><dt>Receipt</dt><dd>{hash.fileName ?? 'Not selected'}</dd></div>
             <div><dt>Signer</dt><dd>{shortAddress(wallet.account)}</dd></div>
             <div><dt>Contract</dt><dd>{shortAddress(walletConfig.contractAddress)}</dd></div>
           </dl>
-          {prepared.error && <p className="field-error">{prepared.error}</p>}
-          <button className="submit-claim" type="submit" disabled={!prepared.value || !canWrite || busy}>
-            {busy ? 'Submission in progress…' : 'Submit claim'}
+          {!confirmed && prepared.error && <p className="field-error">{prepared.error}</p>}
+          <button className="submit-claim" type="submit" disabled={!prepared.value || !canWrite || busy || confirmed}>
+            {busy ? 'Submission in progress…' : confirmed ? 'Claim already confirmed' : 'Submit claim'}
           </button>
           <small>A wallet signature records the ID, allocation, integer-paise amount, and digest. It does not upload the receipt.</small>
 

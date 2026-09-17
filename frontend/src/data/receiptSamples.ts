@@ -1,4 +1,5 @@
 import { receiptFixtures } from './campaign'
+import { publicAssetUrl } from '../lib/publicAsset'
 
 export interface ReceiptSample {
   label: string
@@ -37,5 +38,8 @@ const samplesByExpense: Readonly<Record<string, readonly ReceiptSample[]>> = {
 }
 
 export function receiptSamplesForExpense(expenseId: string): readonly ReceiptSample[] {
-  return samplesByExpense[expenseId] ?? []
+  return (samplesByExpense[expenseId] ?? []).map((sample) => ({
+    ...sample,
+    publicPath: publicAssetUrl(sample.publicPath),
+  }))
 }

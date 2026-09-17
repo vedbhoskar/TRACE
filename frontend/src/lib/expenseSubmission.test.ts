@@ -2,8 +2,10 @@ import { describe, expect, it, vi } from 'vitest'
 import type { ChainAllocation, ChainExpense } from '../chainTypes'
 import {
   createSubmissionGuard,
+  expenseStateAfterWalletChange,
   generateExpenseId,
   prepareExpense,
+  resolveAllocationId,
   submitPreparedExpense,
   type PreparedExpense,
   type SubmissionUpdate,
@@ -70,6 +72,11 @@ function gateway(options: {
 }
 
 describe('expense preparation', () => {
+  it('moves a fresh form off an exhausted allocation while preserving a confirmed summary', () => {
+    expect(resolveAllocationId('AL-FOOD-01', ['AL-MED-01', 'AL-LOG-01'], false)).toBe('AL-MED-01')
+    expect(resolveAllocationId('AL-FOOD-01', ['AL-MED-01', 'AL-LOG-01'], true)).toBe('AL-FOOD-01')
+  })
+
   it('accepts the exact remaining allocation capacity', () => {
     expect(prepareExpense({
       expenseId: 'ex-live-01', allocationId: allocation.id, amount: '1200.00', receiptHash: digest,
@@ -156,6 +163,22 @@ describe('expense submission lifecycle', () => {
     expect(result.status).toBe('confirmed')
     expect(updates.map((item) => item.status)).toEqual(['awaiting-wallet', 'pending', 'confirmed'])
     expect(refreshed).toHaveBeenCalledOnce()
+  })
+
+  it('preserves the confirmed hash when the subsequent data refresh fails', async () => {
+    const result = await submitPreparedExpense(gateway(), prepared, vi.fn(), async () => false)
+    expect(result).toMatchObject({ status: 'confirmed', refreshed: false, transactionHash: expect.any(String) })
+  })
+
+  it('makes wallet changes explicit without losing a pending hash', () => {
+    expect(expenseStateAfterWalletChange({ status: 'awaiting-wallet' })).toMatchObject({ status: 'failed' })
+    expect(expenseStateAfterWalletChange({ status: 'pending', transactionHash: '0xabc' })).toEqual({
+      status: 'uncertain',
+      transactionHash: '0xabc',
+      message: expect.stringContaining('changed'),
+    })
+    const confirmed: SubmissionUpdate = { status: 'confirmed', transactionHash: '0xabc', recovered: false, refreshed: true }
+    expect(expenseStateAfterWalletChange(confirmed)).toBe(confirmed)
   })
 
   it('blocks a second click while the first asynchronous submission is active', async () => {

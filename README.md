@@ -37,7 +37,7 @@ Copy the relevant `.env.example` to `.env` only when network configuration is ne
 
 ## Current scope
 
-Stages 0–7 establish a reproducible toolchain, the canonical synthetic fixture, a tested ProofRegistry contract, a fully seeded Sepolia deployment, wallet-free public chain reads, local receipt-integrity comparison, an injected-wallet NGO expense-submission workspace, and a separately authorized reviewer workspace. The fixture includes validated short IDs, integer-paise money utilities, exact-byte SHA-256 receipt fixtures, and reconciled demonstration metrics. The contract enforces immutable NGO/reviewer roles, parent capacity limits, append-only claims, and preserved review history.
+Stages 0–8 establish a reproducible toolchain, the canonical synthetic fixture, a tested ProofRegistry contract, a fully seeded Sepolia deployment, wallet-free public chain reads, local receipt-integrity comparison, injected-wallet NGO and reviewer workspaces, and a hardened static-host build. The fixture includes validated short IDs, integer-paise money utilities, exact-byte SHA-256 receipt fixtures, and reconciled demonstration metrics. The contract enforces immutable NGO/reviewer roles, parent capacity limits, append-only claims, and preserved review history.
 
 Public deployment:
 
@@ -62,5 +62,7 @@ The Stage 3 verifier confirms ₹10,000 recorded, ₹10,000 allocated, ₹7,700 
 The Stage 6 live acceptance transaction was explicitly approved by the operator and recorded expense `EX-MU4XGHLR-1YS0HMT`: ₹1,200 against `AL-FOOD-01`, with the frozen live-sample digest. It is visible in [transaction `0x1b642d…01c6e`](https://sepolia.etherscan.io/tx/0x1b642de0370fa773dc7f8ad67e49a80868612b4e853dcc8cce1c225bae601c6e). The public deployment now has ₹8,900 in claims and zero Food allocation remainder.
 
 Stage 7 exposes unreviewed and flagged claims to the configured reviewer wallet, keeps file integrity checks independent from reviewer judgment, previews Attested/Flagged decisions and reason codes, and preserves every previous review event after confirmation. The operator separately approved an Attested / Document reviewed decision for the new claim in [transaction `0x94bcce…7aa19`](https://sepolia.etherscan.io/tx/0x94bcce51a24e7cf91ead0b0ff66e39780c60e601e26cb735e5b1ffb4f507aa19).
+
+Stage 8 hardens post-transaction refresh behavior, exhausted-allocation form state, and account/network changes during in-flight wallet operations. Confirmed transaction hashes remain visible if a later public-data refresh fails. The production build uses hash routing and relative assets and has been verified locally under the GitHub Pages project path `/TRACE/`. The prepared public URL is `https://vedbhoskar.github.io/TRACE/`, but it is **not live yet**: GitHub Pages is currently disabled and the uncommitted Stage 8 workflow has not been pushed. After review and explicit approval, commit and push Stage 8; the workflow will test, lint, build, enable Pages, and deploy `frontend/dist`.
 
 All planned demonstration entities, receipts, and amounts are synthetic. No real donation or real nonprofit activity is represented.

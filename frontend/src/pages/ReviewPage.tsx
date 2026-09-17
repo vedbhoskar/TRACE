@@ -8,6 +8,7 @@ import { formatTimestamp, shortHex } from '../lib/display'
 import { formatPaise } from '../lib/money'
 import {
   prepareReview,
+  reviewStateAfterWalletChange,
   submitPreparedReview,
   type ReviewUpdate,
 } from '../lib/reviewSubmission'
@@ -15,7 +16,7 @@ import { walletConfig } from '../lib/wallet'
 
 interface ReviewPageProps {
   data: ProofData
-  onRefresh: () => Promise<void>
+  onRefresh: () => Promise<boolean>
 }
 
 const reasonOptions = [
@@ -33,7 +34,13 @@ function statusCopy(state: ReviewUpdate | null) {
   if (!state) return null
   if (state.status === 'awaiting-wallet') return { title: 'Awaiting wallet approval', body: 'Review the exact reviewer decision in your wallet.', tone: 'pending' }
   if (state.status === 'pending') return { title: 'Review pending', body: 'The decision was broadcast and is waiting for a successful receipt.', tone: 'pending' }
-  if (state.status === 'confirmed') return { title: 'Decision confirmed', body: state.recovered ? 'The receipt wait was interrupted, but the requested review is now on-chain.' : 'The decision was mined and review history was refreshed.', tone: 'success' }
+  if (state.status === 'confirmed') return {
+    title: 'Decision confirmed',
+    body: state.refreshed
+      ? state.recovered ? 'The receipt wait was interrupted, but the requested review is now on-chain and history was refreshed.' : 'The decision was mined and review history was refreshed.'
+      : 'The decision is confirmed. Public review history could not be refreshed yet; the transaction link is preserved below.',
+    tone: state.refreshed ? 'success' : 'warning',
+  }
   if (state.status === 'rejected') return { title: 'Wallet request rejected', body: state.message, tone: 'warning' }
   if (state.status === 'uncertain') return { title: 'Review status uncertain', body: state.message, tone: 'warning' }
   return { title: 'Review failed', body: state.message, tone: 'error' }
@@ -48,11 +55,13 @@ export function ReviewPage({ data, onRefresh }: ReviewPageProps) {
   const [reviewState, setReviewState] = useState<ReviewUpdate | null>(null)
   const guard = useRef(createSubmissionGuard())
   const previousWalletRevision = useRef(wallet.revision)
+  const currentWalletRevision = useRef(wallet.revision)
 
   useEffect(() => {
+    currentWalletRevision.current = wallet.revision
     if (previousWalletRevision.current !== wallet.revision) {
       previousWalletRevision.current = wallet.revision
-      setReviewState(null)
+      setReviewState(reviewStateAfterWalletChange)
     }
   }, [wallet.revision])
 
@@ -77,12 +86,16 @@ export function ReviewPage({ data, onRefresh }: ReviewPageProps) {
     if (!prepared.value || !canWrite || !wallet.provider) return
     setReviewState(null)
     await guard.current.run(async () => {
+      const submittedWalletRevision = wallet.revision
+      const update = (state: ReviewUpdate) => {
+        if (currentWalletRevision.current === submittedWalletRevision) setReviewState(state)
+      }
       try {
         const { createReviewGateway } = await import('../lib/reviewWriter')
         const gateway = await createReviewGateway(wallet.provider!)
-        await submitPreparedReview(gateway, prepared.value!, setReviewState, onRefresh)
+        await submitPreparedReview(gateway, prepared.value!, update, onRefresh)
       } catch {
-        setReviewState({ status: 'failed', message: 'The reviewer wallet adapter could not prepare this transaction. Your choices were preserved.' })
+        update({ status: 'failed', message: 'The reviewer wallet adapter could not prepare this transaction. Your choices were preserved.' })
       }
     })
   }

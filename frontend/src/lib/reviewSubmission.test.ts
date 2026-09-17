@@ -3,6 +3,7 @@ import type { ChainExpense } from '../chainTypes'
 import { createSubmissionGuard } from './expenseSubmission'
 import {
   prepareReview,
+  reviewStateAfterWalletChange,
   submitPreparedReview,
   type PreparedReview,
   type ReviewGateway,
@@ -79,6 +80,20 @@ describe('review transaction lifecycle', () => {
     const uncertain = await submitPreparedReview(gateway({ waitError: true, after: 'unknown' }), prepared, vi.fn())
     expect(recovered).toMatchObject({ status: 'confirmed', recovered: true })
     expect(uncertain.status).toBe('uncertain')
+  })
+
+  it('preserves the confirmed hash when review-history refresh fails', async () => {
+    const result = await submitPreparedReview(gateway(), prepared, vi.fn(), async () => false)
+    expect(result).toMatchObject({ status: 'confirmed', refreshed: false, transactionHash: '0x02' })
+  })
+
+  it('makes wallet changes explicit without losing a pending review hash', () => {
+    expect(reviewStateAfterWalletChange({ status: 'awaiting-wallet' })).toMatchObject({ status: 'failed' })
+    expect(reviewStateAfterWalletChange({ status: 'pending', transactionHash: '0x02' })).toMatchObject({
+      status: 'uncertain', transactionHash: '0x02',
+    })
+    const confirmed: ReviewUpdate = { status: 'confirmed', transactionHash: '0x02', recovered: false, refreshed: true }
+    expect(reviewStateAfterWalletChange(confirmed)).toBe(confirmed)
   })
 
   it('prevents duplicate review clicks while one operation is active', async () => {
