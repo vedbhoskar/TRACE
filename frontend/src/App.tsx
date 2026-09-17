@@ -5,6 +5,7 @@ import { useProofData } from './hooks/useProofData'
 import { parseHashRoute } from './lib/route'
 import { CampaignPage } from './pages/CampaignPage'
 import { TracePage } from './pages/TracePage'
+import { SubmitPage } from './pages/SubmitPage'
 
 function App() {
   const proof = useProofData()
@@ -29,6 +30,7 @@ function App() {
         <nav aria-label="Primary navigation">
           <a href="#/">Campaign</a>
           <a href="#/trace/DON-8F42A1">Trace explorer</a>
+          <a href="#/submit">Submit claim</a>
         </nav>
       </header>
 
@@ -63,6 +65,8 @@ function App() {
             <SourceBadge data={proof.data} onRefresh={() => void proof.refresh()} />
             {route.page === 'campaign' ? (
               <CampaignPage data={proof.data} />
+            ) : route.page === 'submit' ? (
+              <SubmitPage data={proof.data} onRefresh={proof.refresh} />
             ) : (
               <TracePage data={proof.data} donationId={route.donationId} />
             )}

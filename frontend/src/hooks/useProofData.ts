@@ -32,7 +32,9 @@ export function useProofData() {
 
   const refresh = useCallback(async () => {
     const request = ++requestNumber.current
-    setState({ status: 'loading', data: null, error: null })
+    setState((current) => current.status === 'ready'
+      ? current
+      : { status: 'loading', data: null, error: null })
     try {
       const data = await loadLiveProofData()
       if (request === requestNumber.current) {

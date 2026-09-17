@@ -3,9 +3,11 @@ import { canonicalizeId } from './ids'
 export type AppRoute =
   | { page: 'campaign' }
   | { page: 'trace'; donationId: string }
+  | { page: 'submit' }
 
 export function parseHashRoute(hash: string): AppRoute {
   const path = hash.replace(/^#/, '') || '/'
+  if (/^\/submit\/?$/.test(path)) return { page: 'submit' }
   const match = path.match(/^\/trace\/([^/]+)\/?$/)
   if (!match) return { page: 'campaign' }
   let decoded: string
