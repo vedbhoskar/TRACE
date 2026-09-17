@@ -63,6 +63,6 @@ npm run lint
   preserves choices after rejection/failure, and recovers an interrupted
   receipt wait only when the requested latest review is visible on-chain.
 
-The frontend never reads a private key. The Stage 6 live acceptance write must
-be explicitly approved in the configured NGO browser wallet. Stage 7 reviewer
-writes must be separately approved in the configured reviewer browser wallet.
+The frontend never reads a private key. The Stage 6 expense and Stage 7 review
+acceptance writes were each explicitly approved in their separately configured
+browser wallets. Future writes still require the corresponding wallet approval.
